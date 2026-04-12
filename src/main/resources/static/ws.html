@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 测试</title>
+</head>
+<body>
+<h3>WebSocket 消息</h3>
+<div id="msg"></div>
+<br>
+<input type="text" id="content" placeholder="输入消息">
+<button onclick="send()">发送</button>
+
+<script>
+    let ws;
+    const userId = 1001;
+
+    // 连接
+    connect();
+
+    function connect() {
+        ws = new WebSocket("ws://localhost:8080/ws/" + userId);
+
+        // 连接成功
+        ws.onopen = function () {
+            console.log("连接成功");
+            document.getElementById("msg").innerHTML += "<p>→ 已连接服务器</p>";
+        };
+
+        // 收到消息
+        ws.onmessage = function (evt) {
+            document.getElementById("msg").innerHTML += "<p>↓ " + evt.data + "</p>";
+        };
+
+        // 关闭/断开 → 自动重连
+        ws.onclose = function () {
+            document.getElementById("msg").innerHTML += "<p>× 断开连接，正在重连...</p>";
+            setTimeout(connect, 2000); // 2秒后重连
+        };
+
+        // 错误
+        ws.onerror = function () {
+            console.log("连接异常");
+        };
+    }
+
+    // 发送消息
+    function send() {
+        let content = document.getElementById("content").value;
+        ws.send(content);
+        document.getElementById("msg").innerHTML += "<p>↑ " + content + "</p>";
+    }
+</script>
+</body>
+</html>
