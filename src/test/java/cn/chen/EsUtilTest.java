@@ -17,9 +17,6 @@ import java.io.IOException;
 @SpringBootTest
 public class EsUtilTest {
 
-    @MockBean
-    private ServerEndpointExporter serverEndpointExporter;
-
     @Resource
     private EsUtil esUtil;
 

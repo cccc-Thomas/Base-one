@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -63,5 +64,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
         // 返回分页结果（包含 total、pages、records、current 等）
         return userPage;
+    }
+
+    // 添加这个简单的查询方法
+    @Cacheable(value = "userCache", key = "#id")
+    public User getByIdWithCache(Long id) {
+        System.out.println(">>>>>> 正在查询数据库，用户ID: " + id);
+        return this.getById(id);
     }
 }
