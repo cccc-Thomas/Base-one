@@ -35,7 +35,7 @@ public class UserController {
     /**
      * 获取 id 为偶数的用户信息
      *
-     * @return Result 包装的用户列表（id 为偶数）
+     * @return Result 包装的用户列表（id为偶数）
      */
     @GetMapping("/even")
     public Result<List<User>> getEvenUser(){
