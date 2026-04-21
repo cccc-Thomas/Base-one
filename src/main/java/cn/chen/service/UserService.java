@@ -14,4 +14,8 @@ public interface UserService extends IService<User> {
     IPage<User> getTop10Users(Integer id);
 
     User getByIdWithCache(Long id);
+
+    List<User> getAllUsers();
+
+    List<User> getUsersByRole(String role);
 }

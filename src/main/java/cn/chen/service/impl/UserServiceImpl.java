@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,32 +32,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     @Override
     public String getNameById(Long id) {
         //查指定id的用户名
-        String name=userMapper.getNameById(id);
-        //从redis获取feel的值
-        String feel=stringRedisTemplate.opsForValue().get("feel");
-        //写对象到redis
-        User user=new User(100L,"chen","123456","陈","admin");
-        redisCacheUtils.setObject("info",user,60, TimeUnit.SECONDS);
+        String name = userMapper.getNameById(id);
+        //写对象到redis（示例）
+        User user = new User(100L, "chen", "123456", "陈", "admin");
+        redisCacheUtils.setObject("info", user, 60, TimeUnit.SECONDS);
         //从redis获取对象
         User u = redisCacheUtils.getObject("info", User.class);
 
-        return "id为"+id+"的name:"+name+",%nredis存储的对象:"+u.toString();
+        return "id为" + id + "的name:" + name + ",%nredis存储的对象:" + u.toString();
     }
 
     @Override
     public List<User> getEvenUser() {
         LambdaQueryWrapper<User> lambdaQuery = new LambdaQueryWrapper<>();
-        // 正确：用 func() 自定义 SQL 条件，筛选 id 为偶数的用户
+        // 用 func() 自定义 SQL 条件，筛选 id 为偶数的用户
         lambdaQuery.func(wrapper -> wrapper.apply("id % 2 = 0"));
 
-        List<User> list = userMapper.selectList(lambdaQuery);
-        return list;
+        return userMapper.selectList(lambdaQuery);
     }
 
     @Override
     public IPage<User> getTop10Users(Integer current) {
-        // current：当前页
-        // 10：每页10条
+        // current：当前页；每页10条
         Page<User> page = new Page<>(current, 10);
 
         // 执行分页查询
@@ -71,5 +68,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     public User getByIdWithCache(Long id) {
         System.out.println(">>>>>> 正在查询数据库，用户ID: " + id);
         return this.getById(id);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        // 返回数据库中所有用户，使用 ServiceImpl 提供的 list() 方法
+        return this.list();
+    }
+
+    @Override
+    public List<User> getUsersByRole(String role) {
+        LambdaQueryWrapper<User> query = new LambdaQueryWrapper<>();
+        query.eq(User::getRole, role);
+        return userMapper.selectList(query);
     }
 }
