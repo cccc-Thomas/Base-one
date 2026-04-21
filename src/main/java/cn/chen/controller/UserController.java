@@ -25,7 +25,7 @@ public class UserController {
      * 根据 id 查询用户名，并演示 Redis 的使用
      *
      * @param id 用户 ID
-     * @return Result 包装的字符串，包含从数据库读取的用户名和 Redis 示例数据
+     * @return Result 包装的字符串,包含从数据库读取的用户名和 Redis 示例数据
      */
     @GetMapping("/{id}")
     public Result<String> test(@PathVariable Long id) {
